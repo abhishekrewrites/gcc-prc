@@ -11,6 +11,12 @@ const lexend = Lexend({
 export const metadata: Metadata = {
   title: "Equal Experts Product Listing",
   description: "Product Listing Page assignment",
+  metadataBase: new URL("https://your-domain.com"), // Replace with actual domain
+  openGraph: {
+    title: "Equal Experts Product Listing",
+    description: "Product Listing Page assignment",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -20,9 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${lexend.className} antialiased`}
-      >
+      <body className={`${lexend.className} antialiased`}>
         <Navbar />
         {children}
       </body>
