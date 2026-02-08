@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Product } from "@/services/product-service";
+import { DISCOUNTS } from "@/config/discounts";
 
 export interface CartItem {
   product: Product;
@@ -14,7 +15,7 @@ interface CartState {
   updateQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
   discount: { code: string; amount: number } | null;
-  applyDiscount: (code: string) => void;
+  applyDiscount: (code: string) => boolean;
   removeDiscount: () => void;
   wishlist: Product[];
   addToWishlist: (product: Product) => void;
@@ -57,12 +58,17 @@ export const useCartStore = create<CartState>()(
         })),
       clearCart: () => set({ cart: [], discount: null }),
       discount: null,
-      applyDiscount: (code) =>
-        set((state) => {
-          if (code === "SAVE10") return { discount: { code, amount: 0.1 } };
-          if (code === "SAVE20") return { discount: { code, amount: 0.2 } };
-          return { discount: null };
-        }),
+      applyDiscount: (code) => {
+        const discountRule = DISCOUNTS[code as keyof typeof DISCOUNTS];
+
+        if (discountRule) {
+          set({ discount: { code, amount: discountRule.amount } });
+          return true;
+        }
+
+        set({ discount: null });
+        return false;
+      },
       removeDiscount: () => set({ discount: null }),
       wishlist: [],
       addToWishlist: (product) =>

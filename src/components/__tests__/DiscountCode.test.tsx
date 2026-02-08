@@ -19,7 +19,10 @@ describe("DiscountCode", () => {
       (selector) =>
         selector({
           discount: null,
-          applyDiscount: mockApplyDiscount,
+          applyDiscount: (code: string) => {
+            mockApplyDiscount(code);
+            return code === "SAVE10"; // Return true only for SAVE10
+          },
           removeDiscount: mockRemoveDiscount,
         }),
     );
@@ -44,7 +47,7 @@ describe("DiscountCode", () => {
     fireEvent.change(input, { target: { value: "INVALID" } });
     fireEvent.click(screen.getByRole("button", { name: /apply/i }));
     expect(screen.getByText(/invalid discount code/i)).toBeInTheDocument();
-    expect(mockApplyDiscount).not.toHaveBeenCalled();
+    expect(mockApplyDiscount).toHaveBeenCalledWith("INVALID");
   });
 
   it("applies valid code SAVE10", () => {
@@ -63,7 +66,10 @@ describe("DiscountCode", () => {
       (selector) =>
         selector({
           discount: { code: "SAVE20", amount: 0.2 },
-          applyDiscount: mockApplyDiscount,
+          applyDiscount: (code: string) => {
+            mockApplyDiscount(code);
+            return true;
+          },
           removeDiscount: mockRemoveDiscount,
         }),
     );

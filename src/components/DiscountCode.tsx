@@ -14,7 +14,7 @@ export const DiscountCode = () => {
   const discount = useCartStore((state) => state.discount);
   const removeDiscount = useCartStore((state) => state.removeDiscount);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
@@ -24,14 +24,12 @@ export const DiscountCode = () => {
       return;
     }
 
-    if (code !== "SAVE10" && code !== "SAVE20") {
+    if (applyDiscount(code)) {
+      setSuccess(`Coupon ${code} applied!`);
+      setCode("");
+    } else {
       setError("Invalid discount code");
-      return;
     }
-
-    applyDiscount(code);
-    setSuccess(`Coupon ${code} applied!`);
-    setCode("");
   };
 
   const handleRemove = () => {
