@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { DiscountCode } from "@/components/DiscountCode";
+import { SavedItems } from "@/components/SavedItems";
 
 export default function CartPage() {
   const { cart, updateQuantity, removeFromCart, clearCart, discount } =
@@ -158,6 +159,7 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+      <SavedItems />
     </main>
   );
 }

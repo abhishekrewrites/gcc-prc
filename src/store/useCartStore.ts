@@ -16,6 +16,9 @@ interface CartState {
   discount: { code: string; amount: number } | null;
   applyDiscount: (code: string) => void;
   removeDiscount: () => void;
+  wishlist: Product[];
+  addToWishlist: (product: Product) => void;
+  removeFromWishlist: (productId: number) => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -61,6 +64,18 @@ export const useCartStore = create<CartState>()(
           return { discount: null };
         }),
       removeDiscount: () => set({ discount: null }),
+      wishlist: [],
+      addToWishlist: (product) =>
+        set((state) => {
+          if (state.wishlist.some((item) => item.id === product.id)) {
+            return state;
+          }
+          return { wishlist: [...state.wishlist, product] };
+        }),
+      removeFromWishlist: (productId) =>
+        set((state) => ({
+          wishlist: state.wishlist.filter((item) => item.id !== productId),
+        })),
     }),
     {
       name: "cart-storage",

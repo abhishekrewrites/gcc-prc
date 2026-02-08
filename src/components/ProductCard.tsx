@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/useCartStore";
 import { useState } from "react";
+import { WishlistButton } from "@/components/WishlistButton";
 
 interface ProductCardProps {
   product: Product;
@@ -24,7 +25,10 @@ export const ProductCard = ({
 
   return (
     <div className="flex flex-col border  rounded-lg overflow-hidden bg-white ">
-      <div className="relative h-48 w-full p-4 bg-white flex items-center justify-center">
+      <div className="relative h-48 w-full p-4 bg-white flex items-center justify-center group">
+        <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+          <WishlistButton product={product} />
+        </div>
         <Image
           src={product.image}
           alt={product.title}
