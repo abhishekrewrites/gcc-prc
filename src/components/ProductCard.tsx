@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/useCartStore";
 import { useState } from "react";
 import { WishlistButton } from "@/components/WishlistButton";
+import { ProductReviews } from "@/components/ProductReviews";
 
 interface ProductCardProps {
   product: Product;
@@ -48,8 +49,13 @@ export const ProductCard = ({
         <p className="text-sm text-gray-500 capitalize mb-2">
           {product.category}
         </p>
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-2 justify-between">
           <span className="font-bold text-lg">${product.price.toFixed(2)}</span>
+          <ProductReviews
+            productId={product.id}
+            productTitle={product.title}
+            initialRating={product.rating || { rate: 0, count: 0 }}
+          />
         </div>
         <div className="mb-4 grow">
           <p

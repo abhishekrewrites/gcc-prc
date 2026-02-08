@@ -16,6 +16,10 @@ vi.mock("@/components/WishlistButton", () => ({
   WishlistButton: () => <button>Wishlist</button>,
 }));
 
+vi.mock("@/components/ProductReviews", () => ({
+  ProductReviews: () => <div>Reviews</div>,
+}));
+
 const mockProduct = {
   id: 1,
   title: "Test Product",
