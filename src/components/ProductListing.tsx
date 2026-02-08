@@ -1,16 +1,17 @@
 "use client";
-
 import {
   useProductStore,
   selectCategories,
   selectPaginatedProducts,
+  selectInfiniteScrollProducts,
   selectTotalPages,
 } from "@/store/useProductStore";
 import { useShallow } from "zustand/react/shallow";
 import { ProductCard } from "@/components/ProductCard";
 import { Pagination } from "@/components/Pagination";
+import { InfiniteScroll } from "@/components/InfiniteScroll";
 import { Product } from "@/services/product-service";
-import { useEffect, useRef } from "react";
+import { useRef, useEffect } from "react";
 
 interface ProductListingProps {
   initialProducts: Product[];
@@ -38,8 +39,13 @@ export const ProductListing = ({ initialProducts }: ProductListingProps) => {
 
   const categories = useProductStore(useShallow(selectCategories));
   const paginatedProducts = useProductStore(
-    useShallow(selectPaginatedProducts),
+    useShallow(selectInfiniteScrollProducts),
   );
+
+  //  const paginatedProducts = useProductStore(
+  //   useShallow(selectPaginatedProducts),
+  // );
+
   const totalPages = useProductStore(selectTotalPages);
 
   return (
@@ -86,10 +92,16 @@ export const ProductListing = ({ initialProducts }: ProductListingProps) => {
         ))}
       </div>
 
-      <Pagination
+      {/* <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
+      /> */}
+
+      <InfiniteScroll
+        onLoadMore={() => setCurrentPage(currentPage + 1)}
+        hasMore={currentPage < totalPages}
+        isLoading={false}
       />
     </>
   );

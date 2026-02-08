@@ -79,3 +79,10 @@ export const selectTotalPages = (state: ProductState) => {
   const filtered = selectFilteredAndSortedProducts(state);
   return Math.ceil(filtered.length / state.itemsPerPage);
 };
+
+export const selectInfiniteScrollProducts = (state: ProductState) => {
+  const filtered = selectFilteredAndSortedProducts(state);
+  const { currentPage, itemsPerPage } = state;
+  // Return everything from start up to current page * itemsPerPage
+  return filtered.slice(0, currentPage * itemsPerPage);
+};

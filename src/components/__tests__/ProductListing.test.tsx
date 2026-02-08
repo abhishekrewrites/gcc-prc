@@ -19,6 +19,10 @@ vi.mock("@/components/Pagination", () => ({
   ),
 }));
 
+vi.mock("@/components/InfiniteScroll", () => ({
+  InfiniteScroll: () => <div data-testid="infinite-scroll" />,
+}));
+
 vi.mock("zustand/react/shallow", () => ({
   useShallow: (selector: any) => selector,
 }));
@@ -71,7 +75,11 @@ describe("ProductListing", () => {
 
         // Check if selector is one of our exported selectors
         if (typeof selector === "function") {
-          if (selector.name === "selectPaginatedProducts") return mockProducts;
+          if (
+            selector.name === "selectPaginatedProducts" ||
+            selector.name === "selectInfiniteScrollProducts"
+          )
+            return mockProducts;
           if (selector.name === "selectTotalPages") return 1;
           if (selector.name === "selectCategories")
             return ["all", "cat1", "cat2"];
