@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { Product, getProducts } from "@/services/product-service";
-import { useReviewStore } from "./useReviewStore";
 
 interface ProductState {
   products: Product[];
@@ -56,7 +55,6 @@ export const selectCategories = (state: ProductState) => {
 export const selectFilteredAndSortedProducts = (state: ProductState) => {
   const { products, searchQuery, selectedCategory, sortOption, minRating } =
     state;
-  const reviewsState = useReviewStore.getState().reviews;
 
   return products
     .filter((product) => {
@@ -68,17 +66,8 @@ export const selectFilteredAndSortedProducts = (state: ProductState) => {
         selectedCategory === "all" ||
         product.category === selectedCategory;
 
-      // Calculate rating
       const apiRate = product.rating?.rate || 0;
-      const apiCount = product.rating?.count || 0;
-      const localReviews = reviewsState[product.id] || [];
-
-      const totalScore =
-        apiRate * apiCount + localReviews.reduce((sum, r) => sum + r.rating, 0);
-      const totalCount = apiCount + localReviews.length;
-      const averageRating = totalCount === 0 ? 0 : totalScore / totalCount;
-
-      const matchesRating = minRating === 0 || averageRating >= minRating;
+      const matchesRating = minRating === 0 || apiRate >= minRating;
 
       return matchesSearch && matchesCategory && matchesRating;
     })
