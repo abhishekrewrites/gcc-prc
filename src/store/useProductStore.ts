@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { Product, getProducts } from "@/services/product-service";
+import { useReviewStore } from "./useReviewStore";
 
 interface ProductState {
   products: Product[];
@@ -8,10 +9,12 @@ interface ProductState {
   searchQuery: string;
   selectedCategory: string;
   sortOption: string;
+  minRating: number;
   fetchProducts: () => Promise<void>;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string) => void;
   setSortOption: (option: string) => void;
+  setMinRating: (rating: number) => void;
   currentPage: number;
   itemsPerPage: number;
   setCurrentPage: (page: number) => void;
@@ -25,6 +28,7 @@ export const useProductStore = create<ProductState>((set) => ({
   searchQuery: "",
   selectedCategory: "",
   sortOption: "",
+  minRating: 0,
   currentPage: 1,
   itemsPerPage: 8,
   fetchProducts: async () => {
@@ -40,6 +44,7 @@ export const useProductStore = create<ProductState>((set) => ({
   setSelectedCategory: (category) =>
     set({ selectedCategory: category, currentPage: 1 }),
   setSortOption: (option) => set({ sortOption: option, currentPage: 1 }),
+  setMinRating: (rating) => set({ minRating: rating, currentPage: 1 }),
   setCurrentPage: (page) => set({ currentPage: page }),
   setProducts: (products) => set({ products }),
 }));
@@ -49,7 +54,10 @@ export const selectCategories = (state: ProductState) => {
 };
 
 export const selectFilteredAndSortedProducts = (state: ProductState) => {
-  const { products, searchQuery, selectedCategory, sortOption } = state;
+  const { products, searchQuery, selectedCategory, sortOption, minRating } =
+    state;
+  const reviewsState = useReviewStore.getState().reviews;
+
   return products
     .filter((product) => {
       const matchesSearch = product.title
@@ -59,7 +67,20 @@ export const selectFilteredAndSortedProducts = (state: ProductState) => {
         selectedCategory === "" ||
         selectedCategory === "all" ||
         product.category === selectedCategory;
-      return matchesSearch && matchesCategory;
+
+      // Calculate rating
+      const apiRate = product.rating?.rate || 0;
+      const apiCount = product.rating?.count || 0;
+      const localReviews = reviewsState[product.id] || [];
+
+      const totalScore =
+        apiRate * apiCount + localReviews.reduce((sum, r) => sum + r.rating, 0);
+      const totalCount = apiCount + localReviews.length;
+      const averageRating = totalCount === 0 ? 0 : totalScore / totalCount;
+
+      const matchesRating = minRating === 0 || averageRating >= minRating;
+
+      return matchesSearch && matchesCategory && matchesRating;
     })
     .sort((a, b) => {
       if (sortOption === "price-asc") return a.price - b.price;

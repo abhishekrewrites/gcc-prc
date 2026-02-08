@@ -28,6 +28,7 @@ export const ProductListing = ({ initialProducts }: ProductListingProps) => {
     setSelectedCategory,
     sortOption,
     setSortOption,
+    setMinRating,
     currentPage,
     setCurrentPage,
   } = useProductStore();
@@ -78,6 +79,17 @@ export const ProductListing = ({ initialProducts }: ProductListingProps) => {
             <option value="">Sort by</option>
             <option value="price-asc">Price: Low to High</option>
             <option value="price-desc">Price: High to Low</option>
+          </select>
+          <select
+            onChange={(e) => setMinRating(Number(e.target.value))}
+            className="border border-gray-300 rounded-md px-2 py-1 w-full md:w-[150px]"
+            defaultValue={0}
+          >
+            <option value={0}>All Ratings</option>
+            <option value={4}>4★ & up</option>
+            <option value={3}>3★ & up</option>
+            <option value={2}>2★ & up</option>
+            <option value={1}>1★ & up</option>
           </select>
         </div>
       </div>
